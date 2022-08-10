@@ -6,4 +6,8 @@ dependencies:
   - python=3.10
   - xarray
   - numpy
-  - versioneer
+  - pip
+  - pip:
+    - pytest
+    - pytest-cov
+    - pre-commit
