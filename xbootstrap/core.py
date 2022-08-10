@@ -146,7 +146,8 @@ def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
         object with only dimension 'd2' is not.
     blocks : dict
         Dictionary of the dimension(s) to bootstrap and the block sizes to use
-        along each dimension: {dim: blocksize}.
+        along each dimension: {dim: blocksize}. Nesting is carried out according
+        to the order of this dictionary.
     n_iteration : int
         The number of times to repeat the bootstrapping
     exclude_dims : list of list
@@ -205,7 +206,7 @@ def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
             pass
     if sizes is None:
         raise ValueError(
-            "At least one input object must contain all dimensions in dim",
+            "At least one input object must contain all dimensions in blocks.keys()",
         )
 
     # Generate the random indices first so that we can be sure that each
@@ -284,7 +285,8 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
         object with only dimension 'd2' is not.
     blocks : dict
         Dictionary of the dimension(s) to bootstrap and the block sizes to use
-        along each dimension: {dim: blocksize}.
+        along each dimension: {dim: blocksize}. Nesting is carried out according
+        to the order of this dictionary.
     n_iteration : int
         The number of times to repeat the bootstrapping
     exclude_dims : list of list
