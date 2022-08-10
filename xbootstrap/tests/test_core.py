@@ -4,7 +4,11 @@ import pytest
 import numpy as np
 import xarray as xr
 
-from xbootstrap.core import _n_nested_blocked_random_indices, _expand_n_nested_random_indices, block_bootstrap
+from xbootstrap.core import (
+    _n_nested_blocked_random_indices,
+    _expand_n_nested_random_indices,
+    block_bootstrap,
+)
 
 
 @pytest.mark.parametrize("shape", [(1,), (2, 50, 6)])
@@ -146,9 +150,7 @@ def test_block_bootstrap_values(block, n_iteration):
     """
     size = 100
     data = np.array([f"a{j}" for j in range(size)])
-    nested_indexes = _n_nested_blocked_random_indices(
-        dict(a=(100, block)), n_iteration
-    )
+    nested_indexes = _n_nested_blocked_random_indices(dict(a=(100, block)), n_iteration)
     indexes = _expand_n_nested_random_indices([nested_indexes["a"]])
     bootstrapped_data = data[indexes]
     assert not (bootstrapped_data[0, :] == bootstrapped_data).all()
@@ -174,9 +176,7 @@ def test_block_bootstrap_multi_arg(block, n_iteration):
         coords={f"d{i}": range(shape[i]) for i in range(len(shape))},
     )
     y = xr.DataArray(data[:, 0], coords={"d0": range(shape[0])})
-    x_bs, y_bs = block_bootstrap(
-        x, y, blocks={"d0": block}, n_iteration=n_iteration
-    )
+    x_bs, y_bs = block_bootstrap(x, y, blocks={"d0": block}, n_iteration=n_iteration)
     assert (
         x_bs.isel({f"d{i}": 0 for i in range(1, len(shape))}).values == y_bs.values
     ).all()
