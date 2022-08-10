@@ -1,13 +1,15 @@
-import pytest
 import itertools
+
+import pytest
 import numpy as np
 import xarray as xr
 
 from xbootstrap.core import _n_nested_blocked_random_indices, _expand_n_nested_random_indices, block_bootstrap
 
+
 @pytest.mark.parametrize("shape", [(1,), (2, 50, 6)])
-@pytest.mark.parametrize("n_iterations", [1, 5])
-def test_random_indices_shape(shape, n_iterations):
+@pytest.mark.parametrize("n_iteration", [1, 5])
+def test_random_indices_shape(shape, n_iteration):
     """
     Test that _n_nested_blocked_random_indices and
     _expand_n_nested_random_indices produce outputs with the right shape
@@ -18,18 +20,18 @@ def test_random_indices_shape(shape, n_iterations):
     for i in itertools.product(*[range(i) for i in shape]):
         data[i] = "".join([f"{axes[j]}{i[j]}" for j in range(len(i))])
     nested_indexes = _n_nested_blocked_random_indices(
-        dict(zip(axes, zip(shape, blocks))), n_iterations
+        dict(zip(axes, zip(shape, blocks))), n_iteration
     )
     indexes = _expand_n_nested_random_indices(
         [nested_indexes[k] for k in axes],
     )
-    assert data[indexes].shape == shape + (n_iterations,)
+    assert data[indexes].shape == shape + (n_iteration,)
 
 
 @pytest.mark.parametrize("shape", [(9, 8, 7, 6, 5), (5, 5, 5, 5, 5)])
 @pytest.mark.parametrize("blocks", [(1, 2, 3, 4, 5), (5, 5, 5, 5, 5)])
-@pytest.mark.parametrize("n_permutations", [1, 10, 20])
-def test_bootstrap_nesting(shape, blocks, n_permutations):
+@pytest.mark.parametrize("n_iteration", [1, 10, 20])
+def test_bootstrap_nesting(shape, blocks, n_iteration):
     """Test that block bootstrap nests correctly"""
 
     def block_iterate(seq, size):
@@ -74,7 +76,7 @@ def test_bootstrap_nesting(shape, blocks, n_permutations):
 
     # Randomly resample the test data
     nested_indexes = _n_nested_blocked_random_indices(
-        dict(zip(axes, zip(shape, blocks))), n_permutations
+        dict(zip(axes, zip(shape, blocks))), n_iteration
     )
     indexes = _expand_n_nested_random_indices(
         [nested_indexes[k] for k in axes],
@@ -82,7 +84,7 @@ def test_bootstrap_nesting(shape, blocks, n_permutations):
     bootstrapped_data = data[indexes]
 
     # Check that blocks have correct nesting
-    for pi in range(n_permutations):
+    for pi in range(n_iteration):
         for ai in block_iterate(range(shape[0]), blocks[0]):
             inner_b_block_indices = []
             for bi in block_iterate(range(shape[1]), blocks[1]):
@@ -136,8 +138,8 @@ def test_bootstrap_nesting(shape, blocks, n_permutations):
 
 
 @pytest.mark.parametrize("block", [1, 2, 100])
-@pytest.mark.parametrize("n_permutations", [1, 5])
-def test_block_bootstrap_values(block, n_permutations):
+@pytest.mark.parametrize("n_iteration", [1, 5])
+def test_block_bootstrap_values(block, n_iteration):
     """
     Test that block bootstrapping produces different values along the
     sample and iteration dimensions
@@ -145,12 +147,12 @@ def test_block_bootstrap_values(block, n_permutations):
     size = 100
     data = np.array([f"a{j}" for j in range(size)])
     nested_indexes = _n_nested_blocked_random_indices(
-        dict(a=(100, block)), n_permutations
+        dict(a=(100, block)), n_iteration
     )
     indexes = _expand_n_nested_random_indices([nested_indexes["a"]])
     bootstrapped_data = data[indexes]
     assert not (bootstrapped_data[0, :] == bootstrapped_data).all()
-    if (block == size) | (n_permutations == 1):
+    if (block == size) | (n_iteration == 1):
         assert (np.expand_dims(bootstrapped_data[:, 0], -1) == bootstrapped_data).all()
     else:
         assert not (
@@ -159,8 +161,8 @@ def test_block_bootstrap_values(block, n_permutations):
 
 
 @pytest.mark.parametrize("block", [10, 3, 1])
-@pytest.mark.parametrize("n_permutations", [1, 5])
-def test_block_bootstrap_multi_arg(block, n_permutations):
+@pytest.mark.parametrize("n_iteration", [1, 5])
+def test_block_bootstrap_multi_arg(block, n_iteration):
     """Test block bootstrapping with multiple arguments"""
     shape = (10, 5)
     axes = ["a", "b"]
@@ -173,7 +175,7 @@ def test_block_bootstrap_multi_arg(block, n_permutations):
     )
     y = xr.DataArray(data[:, 0], coords={"d0": range(shape[0])})
     x_bs, y_bs = block_bootstrap(
-        x, y, blocks={"d0": block}, n_permutations=n_permutations
+        x, y, blocks={"d0": block}, n_iteration=n_iteration
     )
     assert (
         x_bs.isel({f"d{i}": 0 for i in range(1, len(shape))}).values == y_bs.values
