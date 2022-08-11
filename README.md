@@ -16,8 +16,47 @@ pip install xbootstrap
 ```
 
 ### Example usage
+`xbootstrap` currently comprises a single function which can be used as follows:
 ```python
-import xbootstrap
+import numpy as np
+import xarray as xr
+from xbootstrap import block_bootstrap
 
-# TODO
+# Generate some example data
+n_time = 10
+n_ensemble = 2
+ds1 = xr.DataArray(
+    np.random.random((n_time, n_ensemble)),
+    coords = {
+        "time": range(n_time), 
+        "ensemble": range(n_ensemble)}).to_dataset(name="ds1")
+ds2 = xr.DataArray(
+    np.random.random((n_time, n_ensemble)),
+    coords = {
+        "time": range(n_time), 
+        "ensemble": range(n_ensemble)}).to_dataset(name="ds1")
+ds3 = xr.DataArray(
+    np.random.random((n_time)),
+    coords = {"time": range(n_time)}).to_dataset(name="ds1")
+
+# Create 10 bootstrapped resamples of ds1, ds2 and ds3 using a
+# blocksize of 5 for the time dimension and 1 for the ensemble
+# dimension, and only bootstrapping the time dimension for ds2 
+ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
+    ds1, 
+    ds2, 
+    ds3, 
+    blocks={"time": 5, "ensemble": 1},
+    n_iteration=10, 
+    exclude_dims=[[],["ensemble"],[]])
+```
+`xbootstrap` also operates lazily with dask-backed xarray objects, but this requires `dask` to be installed:
+```python
+ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
+    ds1.chunk({}), 
+    ds2.chunk({}), 
+    ds3.chunk({}), 
+    blocks={"time": 5, "ensemble": 1},
+    n_iteration=10, 
+    exclude_dims=[[],["ensemble"],[]])
 ```

@@ -121,12 +121,12 @@ def _expand_n_nested_random_indices(indices):
 
 def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
     """
-    Repeatedly bootstrap the provided arrays across the specified dimension(s)
-    and stack the new arrays along a new "iteration" dimension. The
-    boostrapping is done in a nested manner. I.e. bootstrap the first provided
-    dimension, then for each bootstrapped sample along that dimenion, bootstrap
-    the second provided dimension, then for each bootstrapped sample along that
-    dimenion...
+    Repeatedly circularly bootstrap the provided arrays across the specified
+    dimension(s) and stack the new arrays along a new "iteration"
+    dimension. The boostrapping is done in a nested manner. I.e. bootstrap
+    the first provided dimension, then for each bootstrapped sample along
+    that dimenion, bootstrap the second provided dimension, then for each
+    bootstrapped sample along that dimenion etc.
 
     Note, this function expands out the iteration dimension inside a
     universal function. However, this can generate very large chunks (it
@@ -136,24 +136,31 @@ def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
 
     Parameters
     ----------
-    objects : xarray Dataset(s)
+    objects : xarray DataArray(s) or Dataset(s)
         The data to bootstrap. Multiple datasets can be passed to be
         bootstrapped in the same way. Where multiple datasets are passed, all
         datasets need not contain all bootstrapped dimensions. However, because
         of the bootstrapping is applied in a nested manner, the dimensions in
         all input objects must also be nested. E.g., for `blocks.keys=['d1',
         'd2','d3']` an object with dimensions 'd1' and 'd2' is valid but an
-        object with only dimension 'd2' is not.
+        object with only dimension 'd2' is not. All datasets are boostrapped
+        according to the same random samples along available dimensions.
     blocks : dict
         Dictionary of the dimension(s) to bootstrap and the block sizes to use
-        along each dimension: {dim: blocksize}. Nesting is carried out according
+        along each dimension: `{dim: blocksize}`. Nesting is carried out according
         to the order of this dictionary.
     n_iteration : int
-        The number of times to repeat the bootstrapping
+        The number of times to repeat the bootstrapping.
     exclude_dims : list of list
         List of the same length as the number of objects giving a list of
         dimensions specifed in `blocks` to exclude from each object. Default is
-        to assume that no dimensions are excluded.
+        to assume that no dimensions are excluded and all `objects` are
+        bootstrapped across all (available) dimensions `blocks`.
+
+    References
+    ----------
+    Wilks, Daniel S. Statistical methods in the atmospheric sciences. Vol. 100.
+      Academic press, 2011.
     """
 
     def _bootstrap(*arrays, indices):
@@ -266,33 +273,40 @@ def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
 
 def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
     """
-    Repeatedly bootstrap the provided arrays across the specified
+    Repeatedly circularly bootstrap the provided arrays across the specified
     dimension(s) and stack the new arrays along a new "iteration"
     dimension. The boostrapping is done in a nested manner. I.e. bootstrap
     the first provided dimension, then for each bootstrapped sample along
     that dimenion, bootstrap the second provided dimension, then for each
-    bootstrapped sample along that dimenion...
+    bootstrapped sample along that dimenion etc.
 
     Parameters
     ----------
-    objects : xarray Dataset(s)
+    objects : xarray DataArray(s) or Dataset(s)
         The data to bootstrap. Multiple datasets can be passed to be
         bootstrapped in the same way. Where multiple datasets are passed, all
         datasets need not contain all bootstrapped dimensions. However, because
         of the bootstrapping is applied in a nested manner, the dimensions in
         all input objects must also be nested. E.g., for `blocks.keys=['d1',
         'd2','d3']` an object with dimensions 'd1' and 'd2' is valid but an
-        object with only dimension 'd2' is not.
+        object with only dimension 'd2' is not. All datasets are boostrapped
+        according to the same random samples along available dimensions.
     blocks : dict
         Dictionary of the dimension(s) to bootstrap and the block sizes to use
-        along each dimension: {dim: blocksize}. Nesting is carried out according
+        along each dimension: `{dim: blocksize}`. Nesting is carried out according
         to the order of this dictionary.
     n_iteration : int
-        The number of times to repeat the bootstrapping
+        The number of times to repeat the bootstrapping.
     exclude_dims : list of list
         List of the same length as the number of objects giving a list of
-        dimensions specifed in `blocks` to exclude from each object. Default
-        is to assume that no dimensions are excluded.
+        dimensions specifed in `blocks` to exclude from each object. Default is
+        to assume that no dimensions are excluded and all `objects` are
+        bootstrapped across all (available) dimensions `blocks`.
+
+    References
+    ----------
+    Wilks, Daniel S. Statistical methods in the atmospheric sciences. Vol. 100.
+      Academic press, 2011.
     """
     # The fastest way to perform the iterations is to expand out the
     # iteration dimension inside the universal function (see
