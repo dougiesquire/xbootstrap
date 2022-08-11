@@ -50,7 +50,7 @@ ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
     n_iteration=1000, 
     exclude_dims=[[],["ensemble"],[]])
 ```
-`xbootstrap` also operates lazily with dask-backed xarray objects, but this requires `dask` to be installed:
+`block_bootstrap` also operates lazily with dask-backed xarray objects, but this requires `dask` to be installed:
 ```python
 ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
     ds1.chunk({}), 
@@ -60,3 +60,6 @@ ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
     n_iteration=1000, 
     exclude_dims=[[],["ensemble"],[]])
 ```
+
+### Contributing
+Contributions are very welcome, particularly in the form of reporting bugs and writing tests. Please open an issue and check out the [contributor guide](CONTRIBUTING.md).
