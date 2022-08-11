@@ -16,7 +16,7 @@ pip install xbootstrap
 ```
 
 ### Example usage
-`xbootstrap` currently comprises a single function which can be used as follows:
+`xbootstrap` currently comprises a single function called `block_bootstrap` that can be used as follows:
 ```python
 import numpy as np
 import xarray as xr
