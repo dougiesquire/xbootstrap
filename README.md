@@ -23,42 +23,40 @@ import xarray as xr
 from xbootstrap import block_bootstrap
 
 # Generate some example data
-n_time = 10
-n_ensemble = 2
+n_time = 100
+n_ensemble = 10
 ds1 = xr.DataArray(
     np.random.random((n_time, n_ensemble)),
-    coords = {
-        "time": range(n_time), 
-        "ensemble": range(n_ensemble)}).to_dataset(name="ds1")
+    coords={"time": range(n_time), "ensemble": range(n_ensemble)},
+)
 ds2 = xr.DataArray(
     np.random.random((n_time, n_ensemble)),
-    coords = {
-        "time": range(n_time), 
-        "ensemble": range(n_ensemble)}).to_dataset(name="ds1")
-ds3 = xr.DataArray(
-    np.random.random((n_time)),
-    coords = {"time": range(n_time)}).to_dataset(name="ds1")
+    coords={"time": range(n_time), "ensemble": range(n_ensemble)},
+)
+ds3 = xr.DataArray(np.random.random((n_time)), coords={"time": range(n_time)})
 
 # Create 1000 bootstrapped resamples of ds1, ds2 and ds3 using a
 # blocksize of 5 for the time dimension and 1 for the ensemble
-# dimension, and only bootstrapping the time dimension for ds2 
+# dimension, and only bootstrapping the time dimension for ds2
 ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
-    ds1, 
-    ds2, 
-    ds3, 
+    ds1,
+    ds2,
+    ds3,
     blocks={"time": 5, "ensemble": 1},
-    n_iteration=1000, 
-    exclude_dims=[[],["ensemble"],[]])
+    n_iteration=1000,
+    exclude_dims=[[], ["ensemble"], []],
+)
 ```
 `block_bootstrap` also operates lazily with dask-backed xarray objects, but this requires `dask` to be installed:
 ```python
 ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
-    ds1.chunk({}), 
-    ds2.chunk({}), 
-    ds3.chunk({}), 
+    ds1.chunk(),
+    ds2.chunk(),
+    ds3.chunk(),
     blocks={"time": 5, "ensemble": 1},
-    n_iteration=1000, 
-    exclude_dims=[[],["ensemble"],[]])
+    n_iteration=10,
+    exclude_dims=[[], ["ensemble"], []],
+)
 ```
 
 ### Contributing

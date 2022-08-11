@@ -7,8 +7,8 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     author="Dougie Squire",
     url="https://github.com/dougiesquire/xbootstrap",
-    description="Nested bootstrap resampling for xarray objects",
-    long_description="Nested, dask-enabled, (block-)bootstrap resampling for xarray objects",
+    description="Nested circular block bootstrap resampling for xarray objects",
+    long_description="xbootstrap is a simple package for performing nested circular block bootstrapping (random resampling with replacement) of xarray objects. Here, 'nested' means that, when multiple dimensions are specified, the first dimension is randomly resampled, then for each randomly sampled element along that dimension the second dimension is randomly resampled, then for each randomly sampled element along that dimension the third dimension is randomly resampled etc. 'Block' boostrapping is a simple way to account for autocorrelation in the data being randomly resampled and 'circular' block bootstrapping avoids undersampling data values near the beginning and end of the dimension(s) being resampled",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",

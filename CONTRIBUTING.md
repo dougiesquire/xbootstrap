@@ -1,6 +1,6 @@
 ## Contributor guide
 
-This package is still is its very early stages of development. The following covers some general guidelines for maintainers and contributors.
+This package is still in its very early stages of development. The following covers some general guidelines for maintainers and contributors.
 
 #### Preparing Pull Requests
 1. Fork this respository. It's fine to use "xbootstrap" as your fork repository name because it will live under your username.
