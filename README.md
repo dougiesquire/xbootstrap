@@ -39,7 +39,7 @@ ds3 = xr.DataArray(
     np.random.random((n_time)),
     coords = {"time": range(n_time)}).to_dataset(name="ds1")
 
-# Create 10 bootstrapped resamples of ds1, ds2 and ds3 using a
+# Create 1000 bootstrapped resamples of ds1, ds2 and ds3 using a
 # blocksize of 5 for the time dimension and 1 for the ensemble
 # dimension, and only bootstrapping the time dimension for ds2 
 ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
@@ -47,7 +47,7 @@ ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
     ds2, 
     ds3, 
     blocks={"time": 5, "ensemble": 1},
-    n_iteration=10, 
+    n_iteration=1000, 
     exclude_dims=[[],["ensemble"],[]])
 ```
 `xbootstrap` also operates lazily with dask-backed xarray objects, but this requires `dask` to be installed:
@@ -57,6 +57,6 @@ ds1_bs, ds2_bs, ds3_bs = block_bootstrap(
     ds2.chunk({}), 
     ds3.chunk({}), 
     blocks={"time": 5, "ensemble": 1},
-    n_iteration=10, 
+    n_iteration=1000, 
     exclude_dims=[[],["ensemble"],[]])
 ```
