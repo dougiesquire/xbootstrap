@@ -63,5 +63,5 @@ export RELEASE=vX.X.X
 git commit --allow-empty -m "Release $RELEASE"
 git tag -a $RELEASE -m "Version $RELEASE"
 
-git push $RELEASE
+git push --tags
 ```
