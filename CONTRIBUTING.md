@@ -51,3 +51,17 @@ pre-commit run --all-files
 ```
 pytest xbootstrap
 ```
+
+#### Preparing a new release
+
+New releases to PyPI are published automatically when a tag is pushed to Github. To publish a new release:
+
+```bash
+export RELEASE=x.x.x
+
+# Create git tags
+git commit --allow-empty -m "Release $RELEASE"
+git tag -a $RELEASE -m "Version $RELEASE"
+
+git push origin $RELEASE
+```
