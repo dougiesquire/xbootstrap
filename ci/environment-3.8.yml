@@ -1,0 +1,12 @@
+name: xbootstrap-test
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - xarray
+  - numpy
+  - pytest
+  - pip
+  - pip:
+    - codecov
+    - pytest-cov
