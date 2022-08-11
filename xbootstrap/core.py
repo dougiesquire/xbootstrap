@@ -316,7 +316,7 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
                 if not isinstance(value, int):
                     value = max(value)
                 N = N * value
-            return itemsize * N / 1024 ** 2
+            return itemsize * N / 1024**2
 
         if isinstance(ds, xr.DataArray):
             ds = ds.to_dataset(name="ds")
@@ -328,7 +328,7 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
             itemsize = da.data.itemsize
             if chunk is None:
                 # numpy array
-                chunks.append((da.data.size * itemsize) / 1024 ** 2)
+                chunks.append((da.data.size * itemsize) / 1024**2)
             else:
                 chunks.append(size_of_chunk(chunk, itemsize))
         return max(chunks)
