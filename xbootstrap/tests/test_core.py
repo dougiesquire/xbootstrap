@@ -185,3 +185,17 @@ def test_block_bootstrap_multi_arg(block, n_iteration):
     assert (
         x_bs.isel({f"d{i}": 0 for i in range(1, len(shape))}).values == y_bs.values
     ).all()
+
+
+def test_block_bootstrap_output_type():
+    """Test that"""
+    shape = (10, 5)
+    data = np.zeros(shape)
+    x = xr.DataArray(
+        data,
+        coords={f"d{i}": range(shape[i]) for i in range(len(shape))},
+    )
+    out = block_bootstrap(x, blocks={"d0": 3}, n_iteration=5)
+    assert isinstance(out, xr.DataArray)
+    out = block_bootstrap(x, x, blocks={"d0": 3}, n_iteration=5)
+    assert isinstance(out, tuple)

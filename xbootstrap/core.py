@@ -399,14 +399,22 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None, circular=T
             )
         )
 
-    return tuple(
-        [
-            xr.concat(
-                b,
-                dim="iteration",
-                coords="minimal",
-                compat="override",
-            )
-            for b in zip(*bootstraps)
-        ]
-    )
+    if len(objects) == 1:
+        return xr.concat(
+            *bootstraps,
+            dim="iteration",
+            coords="minimal",
+            compat="override",
+        )
+    else:
+        return tuple(
+            [
+                xr.concat(
+                    b,
+                    dim="iteration",
+                    coords="minimal",
+                    compat="override",
+                )
+                for b in zip(*bootstraps)
+            ]
+        )
