@@ -7,31 +7,37 @@ import xarray as xr
 
 
 def _get_blocked_random_indices(
-    shape,
-    block_axis,
-    block_size,
-    prev_block_sizes,
+    shape, block_axis, block_size, prev_block_sizes, circular
 ):
     """
     Return indices to randomly sample an axis of an array in consecutive
     (cyclic) blocks
     """
 
-    def _random_blocks(length, block):
+    def _random_blocks(length, block, circular):
         """
-        Indices to randomly sample blocks in a cyclic manner along an axis of a
-        specified length
+        Indices to randomly sample blocks in a along an axis of a specified
+        length
         """
         if block == length:
             return list(range(length))
         else:
             repeats = math.ceil(length / block)
-            return list(
-                chain.from_iterable(
-                    islice(cycle(range(length)), s, s + block)
-                    for s in np.random.randint(0, length, repeats)
+            if circular:
+                indices = list(
+                    chain.from_iterable(
+                        islice(cycle(range(length)), s, s + block)
+                        for s in np.random.randint(0, length, repeats)
+                    )
                 )
-            )[:length]
+            else:
+                indices = list(
+                    chain.from_iterable(
+                        islice(range(length), s, s + block)
+                        for s in np.random.randint(0, length - block + 1, repeats)
+                    )
+                )
+            return indices[:length]
 
     # Don't randomize within an outer block
     if len(prev_block_sizes) > 0:
@@ -51,7 +57,7 @@ def _get_blocked_random_indices(
         indices = np.moveaxis(
             np.stack(
                 [
-                    _random_blocks(shape[block_axis], block_size)
+                    _random_blocks(shape[block_axis], block_size, circular)
                     for _ in range(np.prod(non_block_shapes))
                 ],
                 axis=-1,
@@ -71,7 +77,7 @@ def _get_blocked_random_indices(
         return indices
 
 
-def _n_nested_blocked_random_indices(sizes, n_iteration):
+def _n_nested_blocked_random_indices(sizes, n_iteration, circular):
     """
     Returns indices to randomly resample blocks of an array (with replacement)
     in a nested manner many times. Here, "nested" resampling means to randomly
@@ -86,6 +92,8 @@ def _n_nested_blocked_random_indices(sizes, n_iteration):
         Dictionary with {names: (sizes, blocks)} of the dimensions to resample
     n_iteration : int
         The number of times to repeat the random resampling
+    circular : bool
+        Whether or not to do circular resampling
     """
 
     shape = [s[0] for s in sizes.values()]
@@ -93,7 +101,7 @@ def _n_nested_blocked_random_indices(sizes, n_iteration):
     prev_blocks = []
     for ax, (key, (_, block)) in enumerate(sizes.items()):
         indices[key] = _get_blocked_random_indices(
-            shape[: ax + 1] + [n_iteration], ax, block, prev_blocks
+            shape[: ax + 1] + [n_iteration], ax, block, prev_blocks, circular
         )
         prev_blocks.append(block)
     return indices
@@ -119,7 +127,7 @@ def _expand_n_nested_random_indices(indices):
     return (..., *tuple(broadcast_indices))
 
 
-def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
+def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None, circular=True):
     """
     Repeatedly circularly bootstrap the provided arrays across the specified
     dimension(s) and stack the new arrays along a new "iteration"
@@ -156,6 +164,8 @@ def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
         dimensions specifed in `blocks` to exclude from each object. Default is
         to assume that no dimensions are excluded and all `objects` are
         bootstrapped across all (available) dimensions `blocks`.
+    circular : boolean, optional
+        Whether or not to do circular block bootstrapping
 
     References
     ----------
@@ -220,7 +230,7 @@ def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
     # dask chunk uses the same indices. Note, I tried using random.seed()
     # to achieve this but it was flaky. These are the indices to bootstrap
     # all objects.
-    nested_indices = _n_nested_blocked_random_indices(sizes, n_iteration)
+    nested_indices = _n_nested_blocked_random_indices(sizes, n_iteration, circular)
 
     # Need to expand the indices for broadcasting for each object separately
     # as each object may have different dimensions
@@ -271,7 +281,7 @@ def _block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
     return tuple(res.rename(rename) for res, rename in zip(result, renames))
 
 
-def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
+def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None, circular=True):
     """
     Repeatedly circularly bootstrap the provided arrays across the specified
     dimension(s) and stack the new arrays along a new "iteration"
@@ -302,6 +312,8 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
         dimensions specifed in `blocks` to exclude from each object. Default is
         to assume that no dimensions are excluded and all `objects` are
         bootstrapped across all (available) dimensions `blocks`.
+    circular : boolean, optional
+        Whether or not to do circular block bootstrapping
 
     References
     ----------
@@ -371,6 +383,7 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
                 blocks=blocks,
                 n_iteration=blocksize,
                 exclude_dims=exclude_dims,
+                circular=circular,
             )
         )
 
@@ -382,6 +395,7 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None):
                 blocks=blocks,
                 n_iteration=leftover,
                 exclude_dims=exclude_dims,
+                circular=circular,
             )
         )
 

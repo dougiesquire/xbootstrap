@@ -13,7 +13,8 @@ from xbootstrap.core import (
 
 @pytest.mark.parametrize("shape", [(1,), (2, 50, 6)])
 @pytest.mark.parametrize("n_iteration", [1, 5])
-def test_random_indices_shape(shape, n_iteration):
+@pytest.mark.parametrize("circular", [True, False])
+def test_random_indices_shape(shape, n_iteration, circular):
     """
     Test that _n_nested_blocked_random_indices and
     _expand_n_nested_random_indices produce outputs with the right shape
@@ -24,7 +25,7 @@ def test_random_indices_shape(shape, n_iteration):
     for i in itertools.product(*[range(i) for i in shape]):
         data[i] = "".join([f"{axes[j]}{i[j]}" for j in range(len(i))])
     nested_indexes = _n_nested_blocked_random_indices(
-        dict(zip(axes, zip(shape, blocks))), n_iteration
+        dict(zip(axes, zip(shape, blocks))), n_iteration, circular
     )
     indexes = _expand_n_nested_random_indices(
         [nested_indexes[k] for k in axes],
@@ -35,7 +36,8 @@ def test_random_indices_shape(shape, n_iteration):
 @pytest.mark.parametrize("shape", [(9, 8, 7, 6, 5), (5, 5, 5, 5, 5)])
 @pytest.mark.parametrize("blocks", [(1, 2, 3, 4, 5), (5, 5, 5, 5, 5)])
 @pytest.mark.parametrize("n_iteration", [1, 10, 20])
-def test_bootstrap_nesting(shape, blocks, n_iteration):
+@pytest.mark.parametrize("circular", [True, False])
+def test_bootstrap_nesting(shape, blocks, n_iteration, circular):
     """Test that block bootstrap nests correctly"""
 
     def block_iterate(seq, size):
@@ -80,7 +82,7 @@ def test_bootstrap_nesting(shape, blocks, n_iteration):
 
     # Randomly resample the test data
     nested_indexes = _n_nested_blocked_random_indices(
-        dict(zip(axes, zip(shape, blocks))), n_iteration
+        dict(zip(axes, zip(shape, blocks))), n_iteration, circular
     )
     indexes = _expand_n_nested_random_indices(
         [nested_indexes[k] for k in axes],
@@ -143,14 +145,17 @@ def test_bootstrap_nesting(shape, blocks, n_iteration):
 
 @pytest.mark.parametrize("block", [1, 2, 100])
 @pytest.mark.parametrize("n_iteration", [1, 5])
-def test_block_bootstrap_values(block, n_iteration):
+@pytest.mark.parametrize("circular", [True, False])
+def test_block_bootstrap_values(block, n_iteration, circular):
     """
     Test that block bootstrapping produces different values along the
     sample and iteration dimensions
     """
     size = 100
     data = np.array([f"a{j}" for j in range(size)])
-    nested_indexes = _n_nested_blocked_random_indices(dict(a=(100, block)), n_iteration)
+    nested_indexes = _n_nested_blocked_random_indices(
+        dict(a=(100, block)), n_iteration, circular
+    )
     indexes = _expand_n_nested_random_indices([nested_indexes["a"]])
     bootstrapped_data = data[indexes]
     assert not (bootstrapped_data[0, :] == bootstrapped_data).all()
