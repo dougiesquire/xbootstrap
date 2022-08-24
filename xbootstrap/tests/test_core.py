@@ -181,10 +181,10 @@ def test_block_bootstrap_multi_arg(block, n_iteration):
         x_bs.isel({f"d{i}": 0 for i in range(1, len(shape))}).values == y_bs.values
     ).all()
 
+
 def test_block_bootstrap_output_type():
-    """Test that """
+    """Test that"""
     shape = (10, 5)
-    axes = ["a", "b"]
     data = np.zeros(shape)
     x = xr.DataArray(
         data,
