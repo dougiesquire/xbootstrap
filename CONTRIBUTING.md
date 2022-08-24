@@ -11,7 +11,7 @@ This package is still in its very early stages of development. The following cov
 $ git clone git@github.com:YOUR_GITHUB_USERNAME/xbootstrap.git
 $ cd xbootstrap
 $ git remote add upstream git@github.com:dougiesquire/xbootstrap.git
-$ git checkout -b YOUR-BUGFIX-FEATURE-BRANCH-NAME master
+$ git checkout -b YOUR-BUGFIX-FEATURE-BRANCH-NAME main
 ```
 
 3. Install `xbootstrap`'s dependencies into a new conda environment:
