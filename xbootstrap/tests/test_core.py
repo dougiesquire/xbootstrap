@@ -1,6 +1,7 @@
 import itertools
 
 import pytest
+import dask.array
 import numpy as np
 import xarray as xr
 
@@ -186,17 +187,21 @@ def test_block_bootstrap_multi_arg(block, n_iteration):
         x_bs.isel({f"d{i}": 0 for i in range(1, len(shape))}).values == y_bs.values
     ).all()
 
-
-def test_block_bootstrap_output_type():
+@pytest.mark.parametrize(
+    "data",
+    [
+        np.zeros(shape=(10, 5)),
+        dask.array.zeros((240, 240, 240), chunks=(-1, -1, -1))
+    ]
+)
+def test_block_bootstrap_output_type(data):
     """Test that output type is correct"""
-    shape = (70, 70, 70)
-    data = np.zeros(shape)
+    shape = data.shape
     x = xr.DataArray(
         data,
         coords={f"d{i}": range(shape[i]) for i in range(len(shape))},
     )
-    x = x.chunk()
-    out = block_bootstrap(x, blocks={"d0": 1}, n_iteration=80)
+    out = block_bootstrap(x, blocks={"d0": 1}, n_iteration=2)
     assert isinstance(out, xr.DataArray)
-    out = block_bootstrap(x, x, blocks={"d0": 1}, n_iteration=80)
+    out = block_bootstrap(x, x, blocks={"d0": 1}, n_iteration=2)
     assert isinstance(out, tuple)
