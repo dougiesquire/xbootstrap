@@ -398,7 +398,7 @@ def block_bootstrap(*objects, blocks, n_iteration, exclude_dims=None, circular=T
                 circular=circular,
             )
         )
-    
+
     bootstraps_concat = tuple(
         [
             xr.concat(

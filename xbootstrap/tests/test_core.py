@@ -187,12 +187,10 @@ def test_block_bootstrap_multi_arg(block, n_iteration):
         x_bs.isel({f"d{i}": 0 for i in range(1, len(shape))}).values == y_bs.values
     ).all()
 
+
 @pytest.mark.parametrize(
     "data",
-    [
-        np.zeros(shape=(10, 5)),
-        dask.array.zeros((240, 240, 240), chunks=(-1, -1, -1))
-    ]
+    [np.zeros(shape=(10, 5)), dask.array.zeros((240, 240, 240), chunks=(-1, -1, -1))],
 )
 def test_block_bootstrap_output_type(data):
     """Test that output type is correct"""
