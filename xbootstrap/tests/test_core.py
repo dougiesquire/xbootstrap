@@ -188,14 +188,15 @@ def test_block_bootstrap_multi_arg(block, n_iteration):
 
 
 def test_block_bootstrap_output_type():
-    """Test that"""
-    shape = (10, 5)
+    """Test that output type is correct"""
+    shape = (70, 70, 70)
     data = np.zeros(shape)
     x = xr.DataArray(
         data,
         coords={f"d{i}": range(shape[i]) for i in range(len(shape))},
     )
-    out = block_bootstrap(x, blocks={"d0": 3}, n_iteration=5)
+    x = x.chunk()
+    out = block_bootstrap(x, blocks={"d0": 1}, n_iteration=80)
     assert isinstance(out, xr.DataArray)
-    out = block_bootstrap(x, x, blocks={"d0": 3}, n_iteration=5)
+    out = block_bootstrap(x, x, blocks={"d0": 1}, n_iteration=80)
     assert isinstance(out, tuple)
