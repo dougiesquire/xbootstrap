@@ -1,8 +1,8 @@
 # xbootstrap
 
 [![PyPI](https://img.shields.io/pypi/v/xbootstrap)](https://pypi.org/project/xbootstrap)
-[![tests](https://github.com/dougiesquire/xbootstrap/actions/workflows/tests.yml/badge.svg)](https://github.com/dougiesquire/xbootstrap/actions/workflows/tests.yml)
-[![pre-commit](https://github.com/dougiesquire/xbootstrap/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/dougiesquire/xbootstrap/actions/workflows/pre-commit.yml)
+[![tests](https://github.com/dougiesquire/xbootstrap/actions/workflows/test.yml/badge.svg)](https://github.com/dougiesquire/xbootstrap/actions/workflows/test.yml)
+[![build](https://github.com/dougiesquire/xbootstrap/actions/workflows/build.yml/badge.svg)](https://github.com/dougiesquire/xbootstrap/actions/workflows/build.yml)
 [![codecov](https://codecov.io/gh/dougiesquire/xbootstrap/branch/main/graph/badge.svg?token=N0XB8OZ2AE)](https://codecov.io/gh/dougiesquire/xbootstrap)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/dougiesquire/xbootstrap/blob/master/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
