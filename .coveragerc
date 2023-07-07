@@ -1,5 +1,0 @@
-[run]
-omit =
-    setup.py
-    versioneer.py
-    xbootstrap/_version.py

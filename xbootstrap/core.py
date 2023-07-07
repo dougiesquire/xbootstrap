@@ -1,6 +1,6 @@
 import math
 from collections import OrderedDict
-from itertools import chain, islice, cycle
+from itertools import chain, cycle, islice
 
 import numpy as np
 import xarray as xr

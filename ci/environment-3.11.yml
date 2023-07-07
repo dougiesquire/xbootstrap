@@ -1,13 +1,14 @@
-name: xbootstrap
+name: xbootstrap-test
 channels:
   - conda-forge
-  - defaults
 dependencies:
-  - python=3.10
+  - python=3.11
   - xarray
   - numpy
+  - dask
+  - pytest
+  - pre-commit
   - pip
   - pip:
-    - pytest
+    - codecov
     - pytest-cov
-    - pre-commit

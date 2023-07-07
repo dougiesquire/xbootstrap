@@ -1,13 +1,13 @@
 import itertools
 
-import pytest
 import dask.array
 import numpy as np
+import pytest
 import xarray as xr
 
 from xbootstrap.core import (
-    _n_nested_blocked_random_indices,
     _expand_n_nested_random_indices,
+    _n_nested_blocked_random_indices,
     block_bootstrap,
 )
 
