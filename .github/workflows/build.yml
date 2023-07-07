@@ -1,9 +1,9 @@
-name: Build and deploy distribution
+name: Build
 
 on: [push, pull_request]
 
 jobs:
-  deploy:
+  build:
     name: build and deploy to PyPI
     runs-on: "ubuntu-latest"
     permissions:
