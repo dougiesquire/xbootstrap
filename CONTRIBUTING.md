@@ -17,8 +17,8 @@ $ git checkout -b YOUR-BUGFIX-FEATURE-BRANCH-NAME main
 3. Install `xbootstrap`'s dependencies into a new conda environment:
 
 ```
-$ conda env create -f environment.yml
-$ conda activate xbootstrap
+$ conda env create -f ci/environment-3.11.yml
+$ conda activate xbootstrap-test
 ```
  
 4. Install `xbootstrap` using the editable flag (meaning any changes you make to the package will be reflected directly in your environment):
