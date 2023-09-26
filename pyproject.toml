@@ -84,6 +84,7 @@ select = [
     # Pyupgrade
     "UP",
 ]
+ignore-init-module-imports = true
 
 [tool.ruff.mccabe]
 max-complexity = 18
