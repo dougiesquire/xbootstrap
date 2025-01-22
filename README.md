@@ -1,3 +1,6 @@
+> [!NOTE]  
+> **This repo has been archived. `xbootstrap` code and functionality has been moved into the [`scores` package](https://github.com/nci/scores) and will continue to be maintained and developed there.**
+
 # xbootstrap
 
 [![PyPI](https://img.shields.io/pypi/v/xbootstrap)](https://pypi.org/project/xbootstrap)
